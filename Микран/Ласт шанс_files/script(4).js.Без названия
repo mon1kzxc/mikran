@@ -1,0 +1,17 @@
+function getUrlParams(url = location.search){
+    var regex = /[?&]([^=#]+)=([^&#]*)/g, params = {}, match;
+    while(match = regex.exec(url)) {
+        params[match[1]] = match[2];
+    }
+    return params;
+}
+$(function() {
+    var params = getUrlParams();
+    if(params.c > 0) {
+        $('#complects-tab').click();
+        $('#checkbox-'+params.c).click();
+        $('html').scrollTop($('#checkbox-'+params.c).closest('.spoiler__body').prev('.spoiler__header').offset().top);
+    } else {
+        $('.js-tab:first .nav-link').click();
+    }
+});

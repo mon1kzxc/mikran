@@ -1,0 +1,30 @@
+$(function() {
+    let $form = $('.js-subscribe-add'),
+        actionReal = $form.data('action'),
+        actionFake = $form.attr('action');
+
+    $(document).on('click', '.js-subscribe-add__button', function(ev) {
+        $form.attr('action', actionReal);
+    });
+
+    $(document).on('submit', '.js-subscribe-add', function(ev) {
+        ev.preventDefault();
+
+        let $email = $(this).find('[name="sf_EMAIL"]'),
+            email = $email.val().trim();
+
+        $.post('/local/ajax/subscribeAdd.php', {email: email}, function(response) {
+            if (!response.success) {
+                let msg = response.message || window.BX.message('ERROR_TRY_LATER');
+                app.showError(msg);
+                return;
+            }
+
+            $email.val('');
+            app.showNotify({title: window.BX.message('SUBSCRIBE_ADDED')});
+        }, 'json').always(function() {
+            $form.attr('action', actionFake);
+            $form.data('action', actionReal);
+        });
+    });
+});

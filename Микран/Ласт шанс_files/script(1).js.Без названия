@@ -1,0 +1,32 @@
+$(function() {
+    $(document).on('click', '.js-popup-login .js-form-login [type="submit"]', function(ev) {
+        ev.preventDefault();
+
+        const $btn = $(this);
+        const $form = $btn.closest('form');
+
+        let fmData = new FormData($form[0]);
+        fmData.delete('USER_REMEMBER');
+
+        if ($form.find('[name="USER_REMEMBER"]').is(':checked')) {
+            fmData.append('USER_REMEMBER', 'Y');
+        }
+
+        $.ajax({
+            url: '/local/ajax/auth.php',
+            type: "POST",
+            data: fmData,
+            processData: false,
+            contentType: false
+        }).done(function(response) {
+            $('.js-popup-login .auth-result-block.js-form-login').replaceWith($(response).find('.auth-result-block.js-form-login'));
+            if ($(response).find('.auth-result-block.js-form-login .auth-success').length) {
+                $form[0].reset();
+                $('.form.js-form-login').hide();
+                setTimeout(function() {
+                    location.reload(true);
+                }, 1000);
+            }
+        });
+    });
+});
